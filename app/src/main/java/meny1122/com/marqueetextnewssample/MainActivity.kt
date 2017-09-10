@@ -12,8 +12,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val marquee = findViewById(R.id.marqueeScrollView) as MarqueeTextNews
-        marquee.setText("☆★☆Google☆★☆")
-        marquee.setUrlString("https://www.google.co.jp/")
+        marquee.setText("Marquee Text News！！！！")
+        marquee.setUrlString("https://github.com/meny1122/MarqueeTextNews")
         marquee.setTextColor(Color.BLACK)
         marquee.startMarquee()
     }
