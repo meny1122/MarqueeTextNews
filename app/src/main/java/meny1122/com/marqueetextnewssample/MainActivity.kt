@@ -11,10 +11,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val scrollView = findViewById(R.id.marqueeScrollView) as MarqueeTextNews
-        scrollView.setText("☆★☆Google☆★☆")
-        scrollView.setUrlString("https://www.google.co.jp/")
-        scrollView.setTextColor(Color.BLACK)
-        scrollView.startMarquee()
+        val marquee = findViewById(R.id.marqueeScrollView) as MarqueeTextNews
+        marquee.setText("☆★☆Google☆★☆")
+        marquee.setUrlString("https://www.google.co.jp/")
+        marquee.setTextColor(Color.BLACK)
+        marquee.startMarquee()
     }
 }
