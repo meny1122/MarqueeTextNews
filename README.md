@@ -1,6 +1,6 @@
 # MarqueeTextNews
 
-## Usage
+### Usage
      repositories {
         maven { url 'https://meny1122.github.io/MarqueeTextNews/repository' }
     }
