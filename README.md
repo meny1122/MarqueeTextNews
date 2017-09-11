@@ -1,9 +1,9 @@
 # MarqueeTextNews
 
-### Demo
+## Demo
 ![result](https://github.com/meny1122/MarqueeTextNews/blob/media/marqueesample.gif)
 
-### Usage
+## Inatall
      repositories {
         maven { url 'https://meny1122.github.io/MarqueeTextNews/repository' }
     }
