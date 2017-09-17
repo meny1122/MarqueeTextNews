@@ -4,7 +4,7 @@
 ![result](https://github.com/meny1122/MarqueeTextNews/blob/media/marqueesample.gif)
 
 ## Usage
-
+###### XML
     <meny1122.com.marqueetextnews.MarqueeTextNews
         android:id="@+id/marqueeScrollView"
         android:layout_width="match_parent"
