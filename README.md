@@ -25,5 +25,5 @@
     }
 
      dependencies {
-        compile 'com.meny1122:MarqueeTextNews:1.0'
+        compile 'com.meny1122:MarqueeTextNews:1.1'
     }
