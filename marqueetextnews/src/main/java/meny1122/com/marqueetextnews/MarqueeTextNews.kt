@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.os.Handler
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -30,6 +31,7 @@ class MarqueeTextNews @JvmOverloads constructor(context: Context, attrs: Attribu
     private var stringWidth = 0
     private var viewWidth= 0
     private var mThread: Thread? = null
+    private val mHandler = Handler()
 
     init {
         initMarqueeTextView(attrs)
@@ -62,7 +64,9 @@ class MarqueeTextNews @JvmOverloads constructor(context: Context, attrs: Attribu
         while (!isScrollFinish) {
             val limit = (viewWidth- stringWidth) /2 + stringWidth
             startX += 1
-            scrollTo(startX, 0)
+            mHandler.post {
+                scrollTo(startX, 0)
+            }
             if (startX >= limit) {
                 startX = 0
             }
