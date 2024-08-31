@@ -1,0 +1,94 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.meny1122",
+    "module": "MarqueeTextNews",
+    "version": "1.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "MarqueeTextNews-1.2.aar",
+          "url": "MarqueeTextNews-1.2.aar",
+          "size": 16828,
+          "sha512": "036c2f63aca246507aadcd64cc11468427d40f8b66bf4f9aef6efd7f3cfa52518c0e8b41bfcbf4b4c5add284e92310b8954e3a9a33fa7694bc94b05f2bc6980c",
+          "sha256": "ab715b01e753089c934990a7dc142fe5befb2b616917e881735d8b4788154151",
+          "sha1": "5a9498bd47efcb9f936b3d26e2cfdcd3854f8dd0",
+          "md5": "61528411a96abec4ba8734375dbb02c7"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "+"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.8.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "MarqueeTextNews-1.2.aar",
+          "url": "MarqueeTextNews-1.2.aar",
+          "size": 16828,
+          "sha512": "036c2f63aca246507aadcd64cc11468427d40f8b66bf4f9aef6efd7f3cfa52518c0e8b41bfcbf4b4c5add284e92310b8954e3a9a33fa7694bc94b05f2bc6980c",
+          "sha256": "ab715b01e753089c934990a7dc142fe5befb2b616917e881735d8b4788154151",
+          "sha1": "5a9498bd47efcb9f936b3d26e2cfdcd3854f8dd0",
+          "md5": "61528411a96abec4ba8734375dbb02c7"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "MarqueeTextNews-1.2-sources.jar",
+          "url": "MarqueeTextNews-1.2-sources.jar",
+          "size": 7551,
+          "sha512": "86bfaa09bcdf7153a1888204c28c4543a3771c496d26b5039262cc50048f3a1637fb942297c1da8ea47ea652b7ea62d3b1a45bd918e5811ecb9a9dc7cc5b36a2",
+          "sha256": "60e4fd89c2da18b08443217199bef65ec799c1f038a71e6316b57441126f8792",
+          "sha1": "2392af6cc87543c945fe6c4436e20b134a5acb08",
+          "md5": "84ab4a7f37a09bbe407ec285c61883ac"
+        }
+      ]
+    }
+  ]
+}
