@@ -3,8 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MarqueeTextNews.iml" filepath="$PROJECT_DIR$/MarqueeTextNews.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/marqueetextnews/marqueetextnews.iml" filepath="$PROJECT_DIR$/marqueetextnews/marqueetextnews.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MarqueeTextNews.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.iml" filepath="$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.main.iml" filepath="$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/marqueetextnews/MarqueeTextNews.marqueetextnews.unitTest.iml" />
     </modules>
   </component>
 </project>

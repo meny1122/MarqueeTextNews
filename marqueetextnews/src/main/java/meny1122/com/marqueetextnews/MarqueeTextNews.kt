@@ -7,125 +7,141 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.net.ConnectivityManager
 import android.net.Uri
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.TextView
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.*
 
-/**
- * Created by yuyamatsushima on 2017/09/10.
- */
 
-class MarqueeTextNews @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : HorizontalScrollView(context, attrs, defStyleAttr), NetworkReceiver.Observer{
+class MarqueeTextNews @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : HorizontalScrollView(context, attrs, defStyleAttr), NetworkReceiver.Observer, DefaultLifecycleObserver {
 
-    private var marqueeText: TextView? = null
+    private val marqueeText: TextView
     private var marqueeString = ""
     private var urlString = ""
     private var textHeight = 10
-    private var textColor= Color.rgb(145,145,145)
-    private var isScrollFinish = true
+    private var textColor = Color.rgb(145, 145, 145)
+    private var isScrolling = false
     private var stringWidth = 0
-    private var viewWidth= 0
-    private var mThread: Thread? = null
-    private val mHandler = Handler()
+    private var viewWidth = 0
+    private var scrollJob: Job? = null
+    private var networkReceiver: NetworkReceiver? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {
-        initMarqueeTextView(attrs)
+        marqueeText = initMarqueeTextView(attrs)
+        setupLifecycleObserver()
         setNetworkReceiver()
+    }
+
+    private fun setupLifecycleObserver() {
+        if (context is LifecycleOwner) {
+            (context as LifecycleOwner).lifecycle.addObserver(this)
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        coroutineScope.cancel()
+        unregisterNetworkReceiver()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        coroutineScope.cancel()
+        unregisterNetworkReceiver()
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean = true
 
-
-    private fun initMarqueeTextView(attrs: AttributeSet?) {
-        marqueeText = TextView(context)
-        val params = FrameLayout.LayoutParams(
+    private fun initMarqueeTextView(attrs: AttributeSet?): TextView {
+        return TextView(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.MATCH_PARENT)
-        marqueeText!!.layoutParams= params
-        marqueeText!!.gravity= Gravity.CENTER_VERTICAL
-        marqueeText!!.setOnClickListener{
-            if (Utils().isConnected(context) && !urlString.isEmpty()) {
-                openURL()
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            gravity = Gravity.CENTER_VERTICAL
+            setOnClickListener {
+                if (Utils.isConnected(context) && urlString.isNotEmpty()) {
+                    openURL()
+                }
             }
+            setTextHeight(attrs)
+            addView(this)
         }
-        setTextHeight(attrs)
-        this.addView(marqueeText)
     }
 
-    private val runnable = Runnable {
-        var startX = 0
-        val sleep = Utils().convertPx2Dp(14, context)
+    private fun startScrolling() {
+        scrollJob = coroutineScope.launch {
+            var startX = 0
+            val sleep = Utils.convertPx2Dp(14, context).toLong()
 
-        while (!isScrollFinish) {
-            val limit = (viewWidth- stringWidth) /2 + stringWidth
-            startX += 1
-            mHandler.post {
+            while (isActive && isScrolling) {
+                val limit = (viewWidth - stringWidth) / 2 + stringWidth
+                startX += 1
                 scrollTo(startX, 0)
+                if (startX >= limit) {
+                    startX = 0
+                }
+                delay(sleep)
             }
-            if (startX >= limit) {
-                startX = 0
-            }
-            try {
-                Thread.sleep(sleep)
-            } catch (e: InterruptedException) { e.printStackTrace() }
         }
     }
 
-    private fun resizeTextSize () {
-
+    private fun resizeTextSize() {
         val height = textHeight - 4
         var textSize = 0f
-
         val paint = Paint()
-        paint.textSize= textSize
 
-        var fontMetrics = paint.fontMetrics
-        var textHeight = Math.abs(fontMetrics.top) + Math.abs(fontMetrics.descent)
-
-        while ( height >= textHeight) {
-            textSize++
+        while (true) {
             paint.textSize = textSize
-
-            fontMetrics = paint.fontMetrics
-            textHeight = Math.abs(fontMetrics.top) + Math.abs(fontMetrics.descent)
+            val fontMetrics = paint.fontMetrics
+            val textHeight = Math.abs(fontMetrics.top) + Math.abs(fontMetrics.descent)
+            if (height < textHeight) break
+            textSize++
         }
 
-        marqueeText!!.textSize = textSize
+        marqueeText.textSize = textSize
     }
 
     private fun resizeMarqueeView() {
-        stringWidth = 0
+        val paint = Paint().apply { textSize = marqueeText.textSize }
+        stringWidth = paint.measureText(marqueeText.text.toString()).toInt()
         viewWidth = 0
 
-        val paint = Paint()
-        val textSize = marqueeText!!.textSize
-
-        paint.textSize = textSize
-        val textWidth = paint.measureText(marqueeText!!.text.toString())
-        stringWidth = textWidth.toInt()
-
-        while (viewWidth < Utils().deviceWidth(context)*2 + stringWidth) {
-            val temp = marqueeText!!.text.toString()
-            marqueeText!!.text = "　$temp　"
-            viewWidth = paint.measureText(marqueeText!!.text.toString()).toInt()
+        while (viewWidth < Utils.deviceWidth(context) * 2 + stringWidth) {
+            marqueeText.text = "　${marqueeText.text}　"
+            viewWidth = paint.measureText(marqueeText.text.toString()).toInt()
         }
-        marqueeText!!.width = viewWidth
+        marqueeText.width = viewWidth
     }
 
-    private fun setTextHeight (attrs: AttributeSet?) {
-        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.MarqueeTextNews)
-        textHeight = typedArray.getInteger(R.styleable.MarqueeTextNews_textHeight,10)
+    private fun setTextHeight(attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.MarqueeTextNews).apply {
+            textHeight = getInteger(R.styleable.MarqueeTextNews_textHeight, 10)
+            recycle()
+        }
     }
 
-    private fun setNetworkReceiver () {
-        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        val receiver = NetworkReceiver(this)
-        context.registerReceiver(receiver,filter)
+    private fun setNetworkReceiver() {
+        networkReceiver = NetworkReceiver(this).also { receiver ->
+            val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+            context.registerReceiver(receiver, filter)
+        }
+    }
+
+    private fun unregisterNetworkReceiver() {
+        networkReceiver?.let {
+            context.unregisterReceiver(it)
+            networkReceiver = null
+        }
     }
 
     override fun onDisconnect() {
@@ -138,29 +154,31 @@ class MarqueeTextNews @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     private fun openURL() {
-        val uri = Uri.parse(urlString)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
         context.startActivity(intent)
     }
 
-    private fun setOffLineText () {
+    private fun setOffLineText() {
         stopMarquee()
-        marqueeText!!.post({
-            scrollTo(0,0)
-            marqueeText!!.text = context.getString(R.string.off_line)
-            resizeTextSize()
-            marqueeText!!.width = Utils().deviceWidth(context)
-            marqueeText!!.gravity= Gravity.END
-            marqueeText!!.setTextColor(Color.rgb(145,145,145))
-        })
+        post {
+            scrollTo(0, 0)
+            marqueeText.apply {
+                text = context.getString(R.string.off_line)
+                resizeTextSize()
+                width = Utils.deviceWidth(context)
+                gravity = Gravity.END
+                setTextColor(Color.rgb(145, 145, 145))
+            }
+        }
     }
 
-
     fun setText(text: String) {
-        scrollTo(0,0)
+        scrollTo(0, 0)
         marqueeString = text
-        marqueeText!!.setTextColor(textColor)
-        marqueeText!!.text = marqueeString
+        marqueeText.apply {
+            setTextColor(textColor)
+            this.text = marqueeString
+        }
         resizeTextSize()
         resizeMarqueeView()
     }
@@ -169,24 +187,21 @@ class MarqueeTextNews @JvmOverloads constructor(context: Context, attrs: Attribu
         urlString = url
     }
 
-    fun setTextColor (color:Int) {
+    fun setTextColor(color: Int) {
         textColor = color
-        marqueeText!!.setTextColor(textColor)
+        marqueeText.setTextColor(textColor)
     }
 
     fun startMarquee() {
-        if (isScrollFinish&& !marqueeString.isEmpty()) {
-            isScrollFinish = false
-            mThread = Thread(runnable)
-            mThread!!.start()
+        if (!isScrolling && marqueeString.isNotEmpty()) {
+            isScrolling = true
+            startScrolling()
         }
     }
 
     fun stopMarquee() {
-        if (!isScrollFinish) {
-            isScrollFinish = true
-            mThread = null
-        }
+        isScrolling = false
+        scrollJob?.cancel()
+        scrollJob = null
     }
-
 }
